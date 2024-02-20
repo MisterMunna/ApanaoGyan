@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cricket Game</title>
+    <!-- Add your CSS stylesheets here -->
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #f8f8f8;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        main {
+            padding: 20px;
+            text-align: center;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        canvas {
+            border: 1px solid #333; /* Add a border to the canvas for visibility */
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Cricket Game</h1>
+    </header>
+
+    <main>
+        <canvas id="cricketCanvas" width="800" height="600"></canvas>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Cricket Game. All rights reserved.</p>
+    </footer>
+
+    <!-- Add your JavaScript files here if needed -->
+    <script>
+        // JavaScript code for the cricket game
+        const canvas = document.getElementById('cricketCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Initial positions of the ball and bat
+        let ballX = canvas.width / 2;
+        let ballY = canvas.height - 30;
+        let ballRadius = 10;
+        let ballSpeedX = 2;
+        let ballSpeedY = -2;
+
+        let batWidth = 100;
+        let batHeight = 10;
+        let batX = (canvas.width - batWidth) / 2;
+
+        // Event listener for moving the bat
+        document.addEventListener('mousemove', handleMouseMove);
+
+        function handleMouseMove(event) {
+            const relativeX = event.clientX - canvas.offsetLeft;
+            if (relativeX > 0 && relativeX < canvas.width) {
+                batX = relativeX - batWidth / 2;
+            }
+        }
+
+        // Main game loop
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw the ball
+            ctx.beginPath();
+            ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
+            ctx.fillStyle = '#3498db';
+            ctx.fill();
+            ctx.closePath();
+
+            // Draw the bat
+            ctx.beginPath();
+            ctx.rect(batX, canvas.height - batHeight, batWidth, batHeight);
+            ctx.fillStyle = '#2ecc71';
+            ctx.fill();
+            ctx.closePath();
+
+            // Update ball position
+            ballX += ballSpeedX;
+            ballY += ballSpeedY;
+
+            // Bounce off the walls
+            if (ballX + ballSpeedX > canvas.width - ballRadius || ballX + ballSpeedX < ballRadius) {
+                ballSpeedX = -ballSpeedX;
+            }
+
+            if (ballY + ballSpeedY < ballRadius) {
+                ballSpeedY = -ballSpeedY;
+            } else if (ballY + ballSpeedY > canvas.height - ballRadius) {
+                // Check if the ball hits the bat
+                if (ballX > batX && ballX < batX + batWidth) {
+                    ballSpeedY = -ballSpeedY;
+                } else {
+                    // Game over, reset the ball
+                    ballX = canvas.width / 2;
+                    ballY = canvas.height - 30;
+                    ballSpeedX = 2;
+                    ballSpeedY = -2;
+                }
+            }
+
+            // Continue the game loop
+            requestAnimationFrame(draw);
+        }
+
+        // Start the game loop
+        draw();
+    </script>
+
+</body>
+</html>
